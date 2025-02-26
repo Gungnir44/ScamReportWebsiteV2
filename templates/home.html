@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container">
+      <h2>Welcome to Scam Report Website</h2>
+      <p>This is the homepage. From here, you can submit scam reports and navigate the website.</p>
+
+      <ul>
+          <li><a href="{% url 'register' %}">Register</a></li>
+          <li><a href="{% url 'login' %}">Login</a></li>
+      </ul>
+
+      <p>We rely on your support to keep this platform running.</p>
+
+        <h3>Total Donations: ${{ total_donations }}</h3>
+
+        {% if latest_donor %}
+            <p>Latest donor: {{ latest_donor.user.username|default:"Anonymous" }} - ${{ latest_donor.amount }}</p>
+        {% else %}
+            <p>No donations yet. Be the first to contribute!</p>
+        {% endif %}
+
+        <a href="{% url 'donate' %}" class="btn btn-primary">Donate Now</a>
+        {% if user.is_authenticated %}
+            <li><a href="{% url 'my_reports' %}">My Reports</a></li>
+            <li><a href="{% url 'submit_scam_report' %}" class="btn btn-primary">Submit Scam Report</a></li>
+            <li><a href="{% url 'view_all_reports' %}">View All Reports</a></li>
+            <li><a href="{% url 'view_flagged_websites' %}">Flagged Websites</a></li>
+        {% endif %}
+
+  </div>
+{% endblock %}

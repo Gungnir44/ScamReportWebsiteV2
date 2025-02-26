@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container">
+      <h2>Submit a Comment for "{{ report.title }}"</h2>
+
+      <form method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" class="btn btn-primary">Post Comment</button>
+      </form>
+
+      <p><a href="{% url 'report_detail' report.id %}">Back to Report</a></p>
+  </div>
+{% endblock %}

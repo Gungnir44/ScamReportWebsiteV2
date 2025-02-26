@@ -1,0 +1,8 @@
+<h2>Your Donations</h2>
+<ul>
+  {% for donation in donations %}
+    <li>${{ donation.amount }} - {{ donation.status }} ({{ donation.created_at }})</li>
+  {% empty %}
+    <li>No donations yet.</li>
+  {% endfor %}
+</ul>

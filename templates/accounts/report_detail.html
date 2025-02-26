@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container">
+      <h2>{{ report.title }}</h2>
+      <p><strong>Submitted by:</strong> {{ report.user.username }} on {{ report.submitted_at|date:"Y-m-d H:i" }}</p>
+        <p><strong>Scam URL:</strong> <a href="{{ report.scam_url }}" target="_blank">{{ report.scam_url }}</a></p>
+
+        {% if report.status == "Flagged" %}
+            <p style="color: red;"><strong>⚠ This report was flagged due to OpenPhish detection.</strong></p>
+        {% endif %}
+
+        {% if report.ip_address %}
+            <p><strong>Submitted from IP:</strong> {{ report.ip_address }}</p>
+        {% endif %}
+        {% if report.country %}
+            <p><strong>Country (Estimated):</strong> {{ report.country }}</p>
+        {% endif %}
+
+      <p><strong>Description:</strong> {{ report.description }}</p>
+
+      {% if report.scam_website %}
+        <p><strong>Scam Website:</strong> <a href="{{ report.scam_website }}" target="_blank">{{ report.scam_website }}</a></p>
+      {% endif %}
+
+      {% if report.evidence %}
+        <p><strong>Evidence:</strong> <a href="{{ report.evidence.url }}" download>Download Evidence</a></p>
+      {% endif %}
+
+        <div>
+            <button onclick="vote({{ report.id }}, 'upvote')">👍 Upvote ({{ report.upvotes }})</button>
+            <button onclick="vote({{ report.id }}, 'downvote')">👎 Downvote ({{ report.downvotes }})</button>
+        </div>
+        <p>Credibility Score: <span id="credibility">{{ report.credibility_score }}</span></p>
+
+        <script>
+            function vote(reportId, voteType) {
+                fetch(`/vote/${reportId}/${voteType}/`, { method: 'POST', headers: { 'X-CSRFToken': '{{ csrf_token }}' } })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert(data.error);
+                        } else {
+                            document.querySelector('button[onclick="vote('+reportId+', \'upvote\')"]').innerText = `👍 Upvote (${data.upvotes})`;
+                            document.querySelector('button[onclick="vote('+reportId+', \'downvote\')"]').innerText = `👎 Downvote (${data.downvotes})`;
+                            document.getElementById("credibility").innerText = data.credibility;
+                        }
+                    });
+            }
+        </script>
+
+      <hr>
+
+        <h3>Comments</h3>
+        {% if comments.exists %}
+            <ul>
+                {% for comment in comments %}
+                    <li><strong>{{ comment.user.username }}</strong> - {{ comment.created_at|date:"Y-m-d H:i" }}<br>
+                        {{ comment.content }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No comments yet. Be the first to comment!</p>
+        {% endif %}
+
+        <h3>WHOIS Information</h3>
+        {% if report.whois_info %}
+            <pre>{{ report.whois_info|json_script:"whois-data" }}</pre>
+        {% else %}
+            <p>No WHOIS data available.</p>
+        {% endif %}
+
+      <hr>
+
+      {% if user.is_authenticated %}
+        <a href="{% url 'submit_comment' report.id %}" class="btn btn-primary">Add a Comment</a>
+      {% else %}
+        <p><a href="{% url 'login' %}">Log in</a> to post a comment.</p>
+      {% endif %}
+
+      <p><a href="{% url 'view_reports' %}">Back to Reports</a></p>
+  </div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>My Reports</h2>
+    <ul>
+        {% for report in reports %}
+            <li>
+                <strong>{{ report.title }}</strong> ({{ report.status }}) - 
+                <a href="{% url 'report_detail' report.id %}">View Report</a>
+            </li>
+        {% empty %}
+            <li>No reports submitted yet.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

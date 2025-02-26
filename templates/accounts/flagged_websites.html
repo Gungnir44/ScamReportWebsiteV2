@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Flagged Scam Websites</h2>
+
+    <form method="GET">
+        <input type="text" name="q" placeholder="Search by URL" value="{{ request.GET.q }}">
+        <select name="status">
+            <option value="">All</option>
+            <option value="Flagged" {% if request.GET.status == "Flagged" %}selected{% endif %}>Flagged</option>
+            <option value="Approved" {% if request.GET.status == "Approved" %}selected{% endif %}>Approved</option>
+        </select>
+        <button type="submit">Filter</button>
+    </form>
+
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Scam URL</th>
+            <th>Status</th>
+            <th>Date</th>
+        </tr>
+        {% for report in reports %}
+        <tr>
+            <td>{{ report.title }}</td>
+            <td><a href="{{ report.scam_url }}" target="_blank">{{ report.scam_url }}</a></td>
+            <td>{{ report.status }}</td>
+            <td>{{ report.submitted_at }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No flagged scam websites found.</td></tr>
+        {% endfor %}
+    </table>
+
+    {% if flagged_reports %}
+        <ul class="list-group mt-3">
+            {% for report in flagged_reports %}
+                <li class="list-group-item">
+                    <h4>{{ report.title }}</h4>
+                    <p><strong>Reported By:</strong> {{ report.user.username }}</p>
+                    <p><strong>Date:</strong> {{ report.created_at }}</p>
+                    <p><strong>Description:</strong> {{ report.description }}</p>
+                    {% if report.scam_url %}
+                        <p><a href="{{ report.scam_url }}" target="_blank" class="btn btn-danger">Visit Scam Website</a></p>
+                    {% endif %}
+                    <a href="{% url 'report_detail' report.id %}" class="btn btn-info">View Details</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No flagged scam websites at the moment.</p>
+    {% endif %}
+</div>
+{% endblock %}

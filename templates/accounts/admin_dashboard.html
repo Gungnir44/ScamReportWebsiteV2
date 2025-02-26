@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Admin Dashboard</h2>
+
+    <h3>Pending Scam Reports</h3>
+    <ul>
+        {% for report in pending_reports %}
+            <li>{{ report.title }} - Submitted by {{ report.user.username }}
+                {% if report.image_metadata %}
+                    <p><strong>Image Metadata:</strong></p>
+                    <pre>{{ report.image_metadata|default:"No metadata found" }}</pre>
+                {% endif %}
+
+                {% if report.pdf_metadata %}
+                    <p><strong>PDF Metadata:</strong></p>
+                    <pre>{{ report.pdf_metadata|default:"No metadata found" }}</pre>
+                {% endif %}
+
+                <a href="{% url 'approve_report' report.id %}" class="btn btn-success">Approve</a>
+                <a href="{% url 'reject_report' report.id %}" class="btn btn-danger">Reject</a>
+                <a href="{% url 'flag_report' report.id %}" class="btn btn-warning">Flag</a>
+                {% if report.evidence %}
+                    <a href="{% url 'view_evidence' report.id %}" class="btn btn-info">View Evidence</a>
+                {% endif %}
+                {% if report.scam_url %}
+                    <a href="{{ report.scam_url }}" target="_blank" class="btn btn-primary">Visit Scam Website</a>
+                {% endif %}
+            </li>
+        {% empty %}
+            <p>No pending reports.</p>
+        {% endfor %}
+    </ul>
+
+    <h3>Flagged Scam Reports</h3>
+    <ul>
+        {% for report in flagged_reports %}
+            <li>{{ report.title }} - Submitted by {{ report.user.username }}
+                <a href="{% url 'approve_report' report.id %}" class="btn btn-success">Approve</a>
+                <a href="{% url 'reject_report' report.id %}" class="btn btn-danger">Reject</a>
+                {% if report.evidence %}
+                    <a href="{{ MEDIA_URL }}{{ report.evidence }}" target="_blank" class="btn btn-info">View Evidence</a>
+                {% endif %}
+                {% if report.scam_url %}
+                    <a href="{{ report.scam_url }}" target="_blank" class="btn btn-primary">Visit Scam Website</a>
+                {% endif %}
+            </li>
+        {% empty %}
+            <p>No flagged reports.</p>
+        {% endfor %}
+    </ul>
+
+    <h3>Registered Users</h3>
+    <ul>
+        {% for user in users %}
+            <li>{{ user.username }} - {{ user.email }}
+                {% if not user.is_staff %}
+                    <a href="{% url 'make_admin' user.id %}" class="btn btn-warning">Grant Admin</a>
+                {% else %}
+                    <a href="{% url 'remove_admin' user.id %}" class="btn btn-secondary">Revoke Admin</a>
+                {% endif %}
+                {% if user.is_active %}
+                    <a href="{% url 'disable_user' user.id %}" class="btn btn-danger">Disable</a>
+                {% else %}
+                    <a href="{% url 'enable_user' user.id %}" class="btn btn-success">Enable</a>
+                {% endif %}
+            </li>
+        {% empty %}
+            <p>No registered users.</p>
+        {% endfor %}
+    </ul>
+    <h3>All Scam Reports</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Submitted By</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for report in all_reports %}
+            <tr>
+                <td>{{ report.title }}</td>
+                <td>{{ report.user.username }}</td>
+                <td>{{ report.status }}</td>
+                <td>
+                    <a href="{% url 'view_evidence' report.id %}" class="btn btn-info">View Evidence</a>
+                    {% if report.evidence %}
+                        <a href="{{ report.evidence.url }}" target="_blank" class="btn btn-primary">Download</a>
+                    {% endif %}
+                </td>
+                <td>{{ report.title }}</td>
+                <td>{{ report.user.username }}</td>
+                <td>{{ report.scam_url }}</td>
+                <td>{{ report.submitted_at }}</td>
+                <td>
+                    {% if report.status == "Flagged" %}
+                        <span style="color: red;">⚠ Flagged (OpenPhish)</span>
+                    {% else %}
+                        <span style="color: green;">✅ Safe</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4">No reports found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

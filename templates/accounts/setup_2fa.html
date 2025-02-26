@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Two-Factor Authentication (2FA)</h2>
+
+  {% if user_2fa.is_2fa_enabled %}
+    <p><strong>2FA is currently enabled.</strong></p>
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" name="disable_2fa" class="btn btn-danger">Disable 2FA</button>
+    </form>
+  {% else %}
+    <p><strong>2FA is currently disabled.</strong></p>
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" name="enable_2fa" class="btn btn-primary">Enable 2FA</button>
+    </form>
+  {% endif %}
+
+{% endblock %}

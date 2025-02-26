@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container">
+      <h2>Scam Reports</h2>
+
+      {% if reports %}
+        <ul>
+          {% for report in reports %}
+            <li>
+              <strong>{{ report.title }}</strong> - Submitted by {{ report.user.username }} on {{ report.submitted_at|date:"Y-m-d H:i" }}
+              <br>
+              <a href="{% url 'report_detail' report.id %}">View Details</a>
+            </li>
+              <div class="report">
+                <h3>{{ report.title }}</h3>
+                <p>Submitted by: {{ report.user.username }}</p>
+                <p>Scam URL: <a href="{{ report.scam_url }}" target="_blank">{{ report.scam_url }}</a></p>
+
+                {% if report.status == "Flagged" %}
+                    <p style="color: red;"><strong>⚠ Flagged as a scam by OpenPhish!</strong></p>
+                {% endif %}
+            </div>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No scam reports submitted yet.</p>
+      {% endif %}
+
+      <p><a href="{% url 'home' %}">Back to Home</a></p>
+  </div>
+{% endblock %}

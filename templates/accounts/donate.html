@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Support Us with a Donation</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Donate via PayPal</button>
+</form>
+
+{% if amount %}
+    <p>You are donating ${{ amount }}. Click below to proceed:</p>
+    <a href="{{ paypal_link }}&amount={{ amount }}" target="_blank">
+        <img src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_100x26.png" alt="Donate via PayPal">
+    </a>
+{% endif %}
+
+{% endblock %}

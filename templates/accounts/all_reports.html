@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>All Scam Reports</h2>
+
+    {% if reports %}
+        <ul class="list-group">
+            {% for report in reports %}
+                <li class="list-group-item">
+                    <h4>{{ report.title }}</h4>
+                    <p><strong>Reported By:</strong> {{ report.user.username }}</p>
+                    <p><strong>Date:</strong> {{ report.created_at }}</p>
+                    <p><strong>Description:</strong> {{ report.description }}</p>
+                    {% if report.scam_url %}
+                        <p><a href="{{ report.scam_url }}" target="_blank" class="btn btn-primary">Visit Scam Website</a></p>
+                    {% endif %}
+                    <a href="{% url 'report_detail' report.id %}" class="btn btn-info">View Details</a>
+                    <p><strong>Credibility Score:</strong> {{ report.credibility_score }}</p>
+                    <button onclick="voteReport({{ report.id }}, 'upvote')" class="btn btn-success">Upvote</button>
+                    <button onclick="voteReport({{ report.id }}, 'downvote')" class="btn btn-danger">Downvote</button>
+
+                    <script>
+                    function voteReport(reportId, action) {
+                        fetch(`/vote-report/${reportId}/${action}/`)
+                            .then(response => response.json())
+                            .then(data => {
+                                alert("New Score: " + data.new_score);
+                                location.reload();
+                            });
+                    }
+                    </script>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No scam reports have been submitted yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

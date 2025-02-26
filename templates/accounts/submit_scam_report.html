@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container">
+      <h2>Submit a Scam Report</h2>
+
+      <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" class="btn btn-primary">Submit Report</button>
+      </form>
+
+      <p><a href="{% url 'home' %}">Back to Home</a></p>
+  </div>
+{% endblock %}
