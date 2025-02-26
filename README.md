@@ -39,8 +39,8 @@ The **Scam Victim Report Website** is a Django-based web application designed to
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-repository/scam-report-website.git
-cd scam-report-website
+git clone https://github.com/Gungnir44/ScamReportWebsiteV2.git
+cd ScamReportWebsiteV2
 
 2. Set Up Virtual Environment
 python -m venv .venv
